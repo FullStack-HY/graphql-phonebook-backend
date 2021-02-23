@@ -2,13 +2,16 @@ const { ApolloServer, UserInputError, AuthenticationError, gql } = require('apol
 const { v1: uuid } = require('uuid')
 const jwt = require('jsonwebtoken')
 
+const { PubSub } = require('apollo-server')
+const pubsub = new PubSub()
+
 const mongoose = require('mongoose')
 const Person = require('./models/person')
 const User = require('./models/user')
 
 const JWT_SECRET = 'NEED_HERE_A_SECRET_KEY'
 
-const MONGODB_URI = 'mongodb+srv://fullstack:sekred@cluster0.ostce.mongodb.net/fs2021-phonebook-part8?retryWrites=true&w=majority'
+const MONGODB_URI = 'mongodb+srv://fullstack:fullstack@cluster0.ostce.mongodb.net/fs2021-phonebook-part8?retryWrites=true&w=majority'
 
 console.log('connecting to', MONGODB_URI)
 
@@ -76,7 +79,11 @@ const typeDefs = gql`
     addAsFriend(
       name: String!
     ): User
-  }  
+  }
+
+  type Subscription {
+    personAdded: Person!
+  }
 `
 
 const resolvers = {
@@ -121,6 +128,8 @@ const resolvers = {
         })
       }
   
+      pubsub.publish('PERSON_ADDED', { personAdded: person })
+
       return person
     },
     editNumber: async (root, args) => {
@@ -176,7 +185,13 @@ const resolvers = {
   
       return currentUser
     },
-  }
+    
+  },
+  Subscription: {
+    personAdded: {
+      subscribe: () => pubsub.asyncIterator(['PERSON_ADDED'])
+    },
+  },
 }
 
 const server = new ApolloServer({
@@ -195,6 +210,7 @@ const server = new ApolloServer({
   }
 })
 
-server.listen().then(({ url }) => {
+server.listen().then(({ url, subscriptionsUrl }) => {
   console.log(`Server ready at ${url}`)
+  console.log(`Subscriptions ready at ${subscriptionsUrl}`)
 })
