@@ -4,7 +4,7 @@ const { v1: uuid } = require('uuid')
 const mongoose = require('mongoose')
 const Person = require('./models/person')
 
-const MONGODB_URI = 'mongodb+srv://fullstack:secred@cluster0.ostce.mongodb.net/fs2021-phonebook-part8?retryWrites=true&w=majority'
+const MONGODB_URI = '...'
 
 console.log('connecting to', MONGODB_URI)
 
