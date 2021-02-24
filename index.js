@@ -8,7 +8,7 @@ const User = require('./models/user')
 
 const JWT_SECRET = 'NEED_HERE_A_SECRET_KEY'
 
-const MONGODB_URI = 'mongodb+srv://fullstack:sekred@cluster0.ostce.mongodb.net/fs2021-phonebook-part8?retryWrites=true&w=majority'
+const MONGODB_URI = '...'
 
 console.log('connecting to', MONGODB_URI)
 
